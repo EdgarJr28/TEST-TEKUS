@@ -1,0 +1,35 @@
+app-main:host {
+    display: block;
+    margin: 32px;
+}
+
+.example-form-field {
+    margin: 0 8px 16px 0;
+}
+
+.titulo {
+    width: 5%;
+    justify-content: flex-start;
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.target-info-price {
+    width: 30%;
+    height: 600px;
+    float: right;
+    margin-top: 10%;
+}
+.cdk-overlay-backdrop {
+    z-index: 100;
+}
+.container-calendar{
+    margin-top: 10%;
+    background-color: white;
+    height: 100px;
+    align-items: center;
+}
+.space-btn-search{
+    margin-left: 2%;
+}

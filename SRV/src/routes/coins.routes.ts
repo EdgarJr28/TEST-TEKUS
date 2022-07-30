@@ -1,10 +1,11 @@
-import { Router } from 'express';
+import { Request, Response, Router } from 'express';
+import Server from '../config/serverSockets';
 import { getPricesMoney } from '../controllers/coins.controller';
 
 export var DEBUG: any = true;
 const router = Router();
 
 
-router.get('/api/coins/', getPricesMoney);
+router.get('/api/coins/:id', getPricesMoney);
 
 export default router;  

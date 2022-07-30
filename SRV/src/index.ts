@@ -29,6 +29,6 @@ APP.use(indexRout);
 APP.use(coinsRout);
 
 server.start(() => {
-    console.log(`Servidor socket en el puerto ${SERVER_PORT}`);
+    console.log("Server Listening on port: ", SERVER_PORT);
 });
 

@@ -37,7 +37,9 @@ export default class Server {
     private escucharSockets() {
 
         try {
-            console.log('Escuchando conexiones - sockets');
+            var connSocket: boolean = true;
+            console.log("|------- ", Date(), " -------|");
+            console.log(`Escuchando conexiones - sockets: `, connSocket);
 
             this.io.on('connection', cliente => {
 
@@ -54,10 +56,6 @@ export default class Server {
                 socket.conectarCliente(cliente)
                 // Mensajes
                 socket.mensaje(cliente, this.io);
-
-                // obtener coins data
-                socket.getPricesMoney(cliente, this.io);
-
                 // Desconectar
                 socket.desconectar(cliente, this.io);
 
@@ -65,6 +63,8 @@ export default class Server {
             });
 
         } catch (e: any) {
+            var connSocket: boolean = false;
+            console.log(`Escuchando conexiones - sockets: `, connSocket);
             console.log(e.message);
         }
 
@@ -73,7 +73,6 @@ export default class Server {
 
     start(callback: any) {
         try {
-            console.log('Entro')
             this.httpServer.listen(this.port, callback);
         } catch (e: any) {
             console.log(e.message)

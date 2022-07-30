@@ -1,11 +1,7 @@
 import { Socket } from 'socket.io';
 import socketIO from 'socket.io';
-import { Response } from 'express';
-
 import { UsuariosLista } from '../classes/usuarios-lista';
 import { Usuario } from '../models/usuario';
-import { apiCoins } from '../config/serverCoins';
-import { errorValidation } from './errorValidation';
 
 
 export const usuariosConectados = new UsuariosLista();
@@ -72,38 +68,3 @@ export const obtenerUsuarios = (cliente: Socket, io: socketIO.Server) => {
 }
 
 
-export const getPricesMoney = (cliente: Socket, io: socketIO.Server) => {
-
-    cliente.on('getPrices', () => {
-        try {
-            const moneys = ["USD", "EUR", "COP"]
-            const data: any = [];
-            let temp: number = 1;
-
-            moneys.map(async function (x) {
-                try {
-                    await apiCoins.get(`prices/BTC-${x}/sell`).catch((err) => {
-                        console.error(err);
-                    }).then((result: any) => {
-                        const fullData = result.data.data
-                        data.push(fullData);
-                        const payload = {
-                            ok: true,
-                            data
-                        }
-                        if (temp >= moneys.length) {
-                            io.emit('actualizacion-coins', payload);
-                        }
-                        temp++;
-                    })
-                } catch (e: any) {
-                   console.log(e.message)
-                }
-            });
-        } catch (e: any) {
-            console.log(e.message)
-        }
-    });
-
-
-}
