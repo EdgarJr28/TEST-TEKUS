@@ -4,6 +4,7 @@ import { SERVER_PORT, APP } from '../config/server';
 import http from 'http';
 import { Server, Socket } from "socket.io";
 import * as socket from '../libs/socket';
+import { Request, Response } from 'express'
 
 
 export default class ServerSocket {
@@ -17,7 +18,7 @@ export default class ServerSocket {
 
 
     private constructor() {
-
+        
         this.app = APP;
         this.port = SERVER_PORT;
         this.httpServer = new http.Server(this.app);

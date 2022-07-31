@@ -5,16 +5,15 @@ import Server from '../config/serverSockets';
 import { errorValidation, errorValidationSockets } from '../libs/errorValidation';
 
 // funcion para obtener el valor de las monedas y emitirla con socket.
-export async function getPricesMoneySocket(res: Response): Promise<Response | void> {
+export async function getPricesMoneySocket(req: Request, res: Response): Promise<Response | void> {
     try {
 
         getPriceForMinut(true, res)
         // intervalo para emitir la data cada minuto.
         setInterval(() => getPriceForMinut(true, res), 60000)
         res.status(200).json({ conectado: true, message: "Escuchando socket." })
-
     } catch (e: any) {
-        errorValidation(e, res);
+        errorValidationSockets(e, res);
     }
 }
 
@@ -43,11 +42,9 @@ async function getPriceForMinut(socket: boolean, res: Response): Promise<Respons
                 data.push(fullData);
                 if (temp >= moneys.length) {
                     if (socket == true) {
-                        console.log("socket")
                         const payload = { data }
                         server.io.emit('getPrices', payload)
                     } else {
-                        console.log("express")
                         res.status(200).json({ ok: true, data: data, serveDate: Date.now() })
 
                     }
@@ -55,7 +52,7 @@ async function getPriceForMinut(socket: boolean, res: Response): Promise<Respons
                 temp++;
             })
         } catch (e: any) {
-            errorValidationSockets(e);
+            errorValidationSockets(e, res);
         }
     });
 }

@@ -30,7 +30,7 @@ export class WebsocketService {
 
     checkStatus() {
         this.socket.on('connect', () => {
-            console.log(`conectado al servidor`)
+            console.log(`Socket Conectado`)
             this.socketStatus = true;
         })
 

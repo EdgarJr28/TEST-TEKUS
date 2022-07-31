@@ -4,6 +4,7 @@ import { UsuariosLista } from '../classes/usuarios-lista';
 import { Usuario } from '../models/usuario';
 import { apiCoins } from '../config/serverCoins';
 import { errorValidationSockets } from './errorValidation';
+import { Request, Response } from 'express'
 
 
 export const usuariosConectados = new UsuariosLista();
@@ -71,10 +72,10 @@ export const obtenerUsuarios = (cliente: Socket, io: socketIO.Server) => {
 
 export const obtenerPrecios = (cliente: Socket, io: socketIO.Server) => {
 
-    cliente.on('obtenerPrecios', () => {
+    cliente.on('obtenerPrecios', (res: Response) => {
         console.log("enviado a ", cliente.id)
-        getPriceForMinut(io, cliente.id)
-        setInterval(() => getPriceForMinut(io, cliente.id), 60000)
+        getPriceForMinut(io, cliente.id, res)
+        setInterval(() => getPriceForMinut(io, cliente.id, res), 60000)
     });
 
 }
@@ -85,7 +86,7 @@ export const errorConexSocket = (cliente: Socket, io: socketIO.Server) => {
 }
 
 
-function getPriceForMinut(io: socketIO.Server, id: any) {
+function getPriceForMinut(io: socketIO.Server, id: any, res: Response) {
 
     const moneys = ["USD", "EUR", "COP"]
     const data: any = [];
@@ -104,7 +105,7 @@ function getPriceForMinut(io: socketIO.Server, id: any) {
                 temp++;
             })
         } catch (e: any) {
-            errorValidationSockets(e);
+            errorValidationSockets(e, res);
         }
     });
 }
