@@ -24,8 +24,10 @@ export default class ServerSocket {
         this.io = new Server(this.httpServer, {
             allowEIO3: true, // false by default
             cors: {
-                origin: `http://localhost:${this.port}`,
-                methods: ["GET", "POST"]
+                credentials: true,
+                origin: `*`,
+                methods: ["GET", "POST"],
+                allowedHeaders: ["my-custom-header"]
             }
         });
 
@@ -57,6 +59,7 @@ export default class ServerSocket {
 
                 // Conecta Cliente
                 socket.conectarCliente(cliente)
+
                 // Mensajes
                 socket.mensaje(cliente, this.io);
                 // Desconectar

@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
+import { UserService } from '../services/api.service';
 import { SocketService } from '../services/sockets.service';
 
 
@@ -22,13 +23,17 @@ export class MainComponent implements OnInit {
   preciosObs?: Observable<any>
 
 
-  constructor(public socketService: SocketService) {
+  constructor(public socketService: SocketService,
+     public userService: UserService) {
 
   }
 
   ngOnInit(): void {
-    console.log(this.socketService.connect)
     this.inputControl = new FormControl();
+    this.userService.getPrices().subscribe((res) => {
+      console.log(res)
+    })
+
 
   }
 

@@ -6,7 +6,10 @@ import { AppComponent } from './app.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { MainModule } from './main/main.module';
 import { SocketIoModule, SocketIoConfig } from 'ngx-socket-io';
-import { environment } from 'src/environments/environment';
+
+import { HttpClientModule } from '@angular/common/http';
+
+
 
 @NgModule({
   declarations: [
@@ -17,7 +20,7 @@ import { environment } from 'src/environments/environment';
     AppRoutingModule,
     BrowserAnimationsModule,
     MainModule,
-
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent]

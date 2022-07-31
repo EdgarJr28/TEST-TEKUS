@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
-import { Socket } from 'ngx-socket-io';
+
 import { RouterModule, Routes, Router } from '@angular/router';
 
 import { Subject } from 'rxjs';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
+import { io, Manager } from "socket.io-client";
+
+
+
 
 
 @Injectable({
@@ -12,14 +16,18 @@ import { environment } from 'src/environments/environment';
 })
 export class WebsocketService {
     public socketStatus = false;
+    private socket = io(environment.wsUrl, {
+        reconnectionDelayMax: 10000,
+        extraHeaders: {
+            "my-custom-header": "CLI"
+        }
+    });
     constructor(
-        private socket: Socket,
         private router: Router
-
     ) {
         this.checkStatus();
     }
-    
+
     checkStatus() {
         this.socket.on('connect', () => {
             console.log(`conectado al servidor`)
@@ -38,7 +46,14 @@ export class WebsocketService {
     }
 
     listen(evento: string) {
-        return this.socket.fromEvent(evento);
+        return this.socket.on(evento, (res: any) => {
+            return res;
+        });
     }
 
+    on(evento: string) {
+        this.socket.on(evento, (res: any) => {
+            return res;
+        })
+    }
 }

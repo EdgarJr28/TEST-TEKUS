@@ -4,12 +4,13 @@ import { apiCoins } from '../config/serverCoins';
 import Server from '../config/serverSockets';
 import { errorValidation, errorValidationSockets } from '../libs/errorValidation';
 
-// funcion para obtener el valor de las monedas.
-export async function getPricesMoney(req: Request, res: Response): Promise<Response | void> {
+// funcion para obtener el valor de las monedas y emitirla con socket.
+export async function getPricesMoneySocket(res: Response): Promise<Response | void> {
     try {
 
-        getPriceForMinut()
-        setInterval(() => getPriceForMinut(), 60000)
+        getPriceForMinut(true, res)
+        // intervalo para emitir la data cada minuto.
+        setInterval(() => getPriceForMinut(true, res), 60000)
         res.status(200).json({ conectado: true, message: "Escuchando socket." })
 
     } catch (e: any) {
@@ -17,8 +18,18 @@ export async function getPricesMoney(req: Request, res: Response): Promise<Respo
     }
 }
 
+// funcion para obtener el valor de las monedas y enviarla al cliente con express.
+export async function getPricesMoney(req: Request, res: Response): Promise<Response | void> {
+    try {
+        await getPriceForMinut(false, res);
+    } catch (e: any) {
+        errorValidation(e, res);
+    }
+}
 
-function getPriceForMinut() {
+
+// proxy APi coinbase
+async function getPriceForMinut(socket: boolean, res: Response): Promise<Response | void> {
     const server = Server.instance;
     const moneys = ["USD", "EUR", "COP"]
     const data: any = [];
@@ -31,8 +42,15 @@ function getPriceForMinut() {
                 const fullData = result.data.data
                 data.push(fullData);
                 if (temp >= moneys.length) {
-                    const payload = { data }
-                    server.io.emit('getPrices', payload)
+                    if (socket == true) {
+                        console.log("socket")
+                        const payload = { data }
+                        server.io.emit('getPrices', payload)
+                    } else {
+                        console.log("express")
+                        res.status(200).json({ ok: true, data: data, serveDate: Date.now() })
+
+                    }
                 }
                 temp++;
             })
