@@ -1,6 +1,6 @@
 app-main:host {
     display: block;
-    margin: 32px;
+   
 }
 
 .example-form-field {
@@ -8,7 +8,6 @@ app-main:host {
 }
 
 .titulo {
-    width: 5%;
     justify-content: flex-start;
     text-align: center;
     font-size: 20px;
@@ -31,5 +30,20 @@ app-main:host {
     align-items: center;
 }
 .space-btn-search{
-    margin-left: 2%;
+    margin-left: 1%;
+    margin-top: -1%;
+}
+
+.logo{
+    width : 40px !important;
+    height: 40px !important;
+}
+.nav-title{
+    text-align: center;
+    margin: 2%;
+    display: flex;
+}
+.value-money{
+    margin: 30%;
+    
 }

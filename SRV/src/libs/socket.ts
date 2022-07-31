@@ -2,6 +2,8 @@ import { Socket } from 'socket.io';
 import socketIO from 'socket.io';
 import { UsuariosLista } from '../classes/usuarios-lista';
 import { Usuario } from '../models/usuario';
+import { apiCoins } from '../config/serverCoins';
+import { errorValidationSockets } from './errorValidation';
 
 
 export const usuariosConectados = new UsuariosLista();
@@ -67,4 +69,42 @@ export const obtenerUsuarios = (cliente: Socket, io: socketIO.Server) => {
 
 }
 
+export const obtenerPrecios = (cliente: Socket, io: socketIO.Server) => {
 
+    cliente.on('obtenerPrecios', () => {
+        console.log("enviado a ", cliente.id)
+        getPriceForMinut(io, cliente.id)
+        setInterval(() => getPriceForMinut(io, cliente.id), 60000)
+    });
+
+}
+export const errorConexSocket = (cliente: Socket, io: socketIO.Server) => {
+    io.on("connect_error", (err) => {
+        console.log(`connect_error due to ${err.message}`);
+    });
+}
+
+
+function getPriceForMinut(io: socketIO.Server, id: any) {
+
+    const moneys = ["USD", "EUR", "COP"]
+    const data: any = [];
+    let temp: number = 1;
+    moneys.map(async function (x) {
+        try {
+            await apiCoins.get(`prices/BTC-${x}/sell`).catch((err: any) => {
+                console.error(err.message);
+            }).then((result: any) => {
+                const fullData = result.data.data
+                data.push(fullData);
+                if (temp >= moneys.length) {
+                    const payload = { data }
+                    io.to(id).emit('getPrices', payload)
+                }
+                temp++;
+            })
+        } catch (e: any) {
+            errorValidationSockets(e);
+        }
+    });
+}

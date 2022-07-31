@@ -6,6 +6,6 @@ export var DEBUG: any = true;
 const router = Router();
 
 
-router.get('/api/coins/:id', getPricesMoney);
+router.get('/api/coins/', getPricesMoney);
 
 export default router;  

@@ -2,6 +2,9 @@
 
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 /*!
 * Start Bootstrap - Simple Sidebar v6.0.5 (https://startbootstrap.com/template/simple-sidebar)
 * Copyright 2013-2022 Start Bootstrap
@@ -11301,6 +11304,7 @@ textarea.form-control-lg {
 
 #sidebar-wrapper .sidebar-heading {
   padding: 0.875rem 1.25rem;
+  display: flex;
   font-size: 1.2rem;
 }
 

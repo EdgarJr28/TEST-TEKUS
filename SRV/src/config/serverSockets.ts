@@ -1,21 +1,18 @@
 
 import express from 'express';
 import { SERVER_PORT, APP } from '../config/server';
-import socketIO from 'socket.io';
 import http from 'http';
-import { Response } from 'express';
-
+import { Server, Socket } from "socket.io";
 import * as socket from '../libs/socket';
 
 
+export default class ServerSocket {
 
-export default class Server {
-
-    private static _intance: Server;
+    private static _intance: ServerSocket;
 
     public app: express.Application;
     public port: any;
-    public io: socketIO.Server;
+    public io: Server;
     private httpServer: http.Server;
 
 
@@ -24,7 +21,13 @@ export default class Server {
         this.app = APP;
         this.port = SERVER_PORT;
         this.httpServer = new http.Server(this.app);
-        this.io = socketIO(this.httpServer);
+        this.io = new Server(this.httpServer, {
+            allowEIO3: true, // false by default
+            cors: {
+                origin: `http://localhost:${this.port}`,
+                methods: ["GET", "POST"]
+            }
+        });
 
         this.escucharSockets();
     }
@@ -41,7 +44,7 @@ export default class Server {
             console.log("|------- ", Date(), " -------|");
             console.log(`Escuchando conexiones - sockets: `, connSocket);
 
-            this.io.on('connection', cliente => {
+            this.io.on('connection', (cliente) => {
 
                 console.log(`Cliente conectado con ID:  ${cliente.id}`);
 
@@ -59,6 +62,11 @@ export default class Server {
                 // Desconectar
                 socket.desconectar(cliente, this.io);
 
+                //obtener precios
+                socket.obtenerPrecios(cliente, this.io);
+
+                // error en el socket 
+                socket.errorConexSocket(cliente, this.io);
 
             });
 

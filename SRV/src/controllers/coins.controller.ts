@@ -7,10 +7,10 @@ import { errorValidation, errorValidationSockets } from '../libs/errorValidation
 // funcion para obtener el valor de las monedas.
 export async function getPricesMoney(req: Request, res: Response): Promise<Response | void> {
     try {
-        const id = req.params.id;
-        getPriceForMinut(id)
-        setInterval(() => getPriceForMinut(id), 60000)
-        res.status(200).json({conectado : true, uid : id, message : "Escuchando socket."})
+
+        getPriceForMinut()
+        setInterval(() => getPriceForMinut(), 60000)
+        res.status(200).json({ conectado: true, message: "Escuchando socket." })
 
     } catch (e: any) {
         errorValidation(e, res);
@@ -18,7 +18,7 @@ export async function getPricesMoney(req: Request, res: Response): Promise<Respo
 }
 
 
-function getPriceForMinut(id: string) {
+function getPriceForMinut() {
     const server = Server.instance;
     const moneys = ["USD", "EUR", "COP"]
     const data: any = [];
@@ -32,7 +32,7 @@ function getPriceForMinut(id: string) {
                 data.push(fullData);
                 if (temp >= moneys.length) {
                     const payload = { data }
-                    server.io.emit(id).emit('getPrices', payload)
+                    server.io.emit('getPrices', payload)
                 }
                 temp++;
             })
