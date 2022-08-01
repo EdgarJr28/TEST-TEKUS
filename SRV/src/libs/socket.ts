@@ -71,14 +71,14 @@ export const obtenerUsuarios = (cliente: Socket, io: socketIO.Server) => {
 }
 
 export const obtenerPrecios = (cliente: Socket, io: socketIO.Server) => {
-
-    cliente.on('obtenerPrecios', (res: Response) => {
+    cliente.on('obtenerPrecios', (arg, callback: Function) => {
         console.log("enviado a ", cliente.id)
-        getPriceForMinut(io, cliente.id, res)
-        setInterval(() => getPriceForMinut(io, cliente.id, res), 60000)
+        getPriceForMinut(io, cliente.id, (payload: any) => {
+            callback(payload);
+        })
     });
-
 }
+
 export const errorConexSocket = (cliente: Socket, io: socketIO.Server) => {
     io.on("connect_error", (err) => {
         console.log(`connect_error due to ${err.message}`);
@@ -86,7 +86,7 @@ export const errorConexSocket = (cliente: Socket, io: socketIO.Server) => {
 }
 
 
-function getPriceForMinut(io: socketIO.Server, id: any, res: Response) {
+function getPriceForMinut(io: socketIO.Server, id: any, callback: any) {
 
     const moneys = ["USD", "EUR", "COP"]
     const data: any = [];
@@ -100,12 +100,14 @@ function getPriceForMinut(io: socketIO.Server, id: any, res: Response) {
                 data.push(fullData);
                 if (temp >= moneys.length) {
                     const payload = { data }
+                    callback(payload)
                     io.to(id).emit('getPrices', payload)
+
                 }
                 temp++;
             })
         } catch (e: any) {
-            errorValidationSockets(e, res);
+            console.log(e.message)
         }
     });
 }

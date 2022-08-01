@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 import { Observable } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { io, Manager } from "socket.io-client";
+import { Socket } from 'ngx-socket-io';
 
 
 
@@ -16,7 +17,7 @@ import { io, Manager } from "socket.io-client";
 })
 export class WebsocketService {
     public socketStatus = false;
-    private socket = io(environment.wsUrl, {
+    public socket = io(environment.wsUrl, {
         reconnectionDelayMax: 10000,
         extraHeaders: {
             "my-custom-header": "CLI"
@@ -42,7 +43,7 @@ export class WebsocketService {
     }
 
     emit(evento: string, payload?: any, callback?: Function) {
-        this.socket.emit(evento, payload, callback)
+        return this.socket.emit(evento, payload, callback)
     }
 
     listen(evento: string) {
@@ -51,9 +52,16 @@ export class WebsocketService {
         });
     }
 
-    on(evento: string) {
-        this.socket.on(evento, (res: any) => {
-            return res;
-        })
+
+
+    on(evento: string): any {
+        console.log(this.socket.id)
+        this.socket.emit(evento, "", (response: any) => {
+            //console.log(response, " ws.tc")
+            return response
+
+        });
     }
+
+
 }

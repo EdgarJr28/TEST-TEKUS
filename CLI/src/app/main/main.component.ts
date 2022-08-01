@@ -3,8 +3,8 @@ import { FormGroup, FormControl } from '@angular/forms';
 import { Observable } from 'rxjs';
 import { UserService } from '../services/api.service';
 import { SocketService } from '../services/sockets.service';
-
-
+import { WebsocketService } from '../services/websocket.service';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-main',
@@ -14,31 +14,60 @@ import { SocketService } from '../services/sockets.service';
 
 export class MainComponent implements OnInit {
   today = new Date();
-  valUSD: number = 30;
-  valEUR: number = 2.10;
-  valCOP: number = 100000.00;
   public inputControl: FormControl = new FormControl;
   date = new FormControl(new Date());
   serializedDate = new FormControl(new Date().toISOString());
-  preciosObs?: Observable<any>
+  precios: any = [];
 
 
-  constructor(public socketService: SocketService,
-     public userService: UserService) {
-
+  constructor(
+    public userService: UserService, public wsService: WebsocketService) {
+    // obtener y refrescar mediante api rest  
+    // this.obtenerPrecios();
+    // this.refrescarBoard(); 
+    // ---------------------------------------- 
+    // ---------------------------------------- 
+    // obtener y refrescar mediante WebSockets 
+    this.obtenerPreciosWs();
+    this.refrescarBoardWs()
   }
 
   ngOnInit(): void {
     this.inputControl = new FormControl();
-    this.userService.getPrices().subscribe((res) => {
-      console.log(res)
-    })
-
-
+    this.precios = []
   }
 
   buscar() {
     console.log(this.serializedDate.value)
-    console.log(this.preciosObs)
+  }
+
+  trackByFn(index: any, item: any) {
+    return item.id;
+  }
+  obtenerPrecios() {
+    this.userService.getPrices().subscribe((res: any) => {
+      this.precios = []
+      res.data.forEach((element: any) => {
+        this.precios.push(element)
+      });
+    })
+  }
+
+  obtenerPreciosWs() {
+    this.wsService.emit("obtenerPrecios", "", (response: any) => {
+      this.precios = []
+      response.data.forEach((element: any) => {
+        this.precios.push(element)
+      });
+
+    });
+  }
+
+  refrescarBoard() {
+    setInterval(() => { this.obtenerPrecios() }, 60000);
+  }
+
+  refrescarBoardWs() {
+    setInterval(() => { this.obtenerPreciosWs() }, 60000);
   }
 }

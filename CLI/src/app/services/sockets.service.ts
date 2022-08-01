@@ -10,17 +10,18 @@ export class SocketService {
     messages?: Subject<any>;
 
     constructor(public wsService: WebsocketService) { }
-    
+
 
     emitirUsuariosActivos() {
         return this.wsService.emit('obtener-usuarios');
     }
     obtenerPrecios() {
-        return this.wsService.listen('getPrices');
+        console.log(this.wsService.on("obtenerPrecios"))
+        return this.wsService.on("obtenerPrecios")
     }
 
     connect() {
-        return this.wsService.on("connect")
+        //return this.wsService.on("connect")
     }
 
 }   
